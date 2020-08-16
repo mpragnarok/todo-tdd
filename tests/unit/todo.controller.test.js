@@ -98,10 +98,10 @@ describe("TodoController.deleteTodo", () => {
     it("should call TodoModel.deleteOne with route parameters", async () => {
         req.params.todoId = todoId;
         await TodoController.deleteTodo(req, res, next);
-        expect(TodoModel.deleteOne).toBeCalledWith(todoId);
+        expect(TodoModel.findByIdAndDelete).toBeCalledWith(todoId);
     });
     it("should return json body and response code 200", async () => {
-        TodoModel.deleteOne.mockReturnValue(newTodo);
+        TodoModel.findByIdAndDelete.mockReturnValue(newTodo);
         await TodoController.deleteTodo(req, res, next);
         expect(res.statusCode).toBe(200);
         expect(res._isEndCalled()).toBeTruthy();
@@ -112,13 +112,13 @@ describe("TodoController.deleteTodo", () => {
         const errorMessage = { message: "Error delete todo" };
         const rejectedPromise = Promise.reject(errorMessage);
 
-        TodoModel.deleteOne.mockReturnValue(rejectedPromise);
+        TodoModel.findByIdAndDelete.mockReturnValue(rejectedPromise);
         await TodoController.deleteTodo(req, res, next);
         expect(next).toHaveBeenCalledWith(errorMessage);
     });
 
     it("should handle 404", async () => {
-        TodoModel.deleteOne.mockReturnValue(null);
+        TodoModel.findByIdAndDelete.mockReturnValue(null);
         await TodoController.deleteTodo(req, res, next);
         expect(res.statusCode).toBe(404);
         expect(res._isEndCalled()).toBeTruthy();
